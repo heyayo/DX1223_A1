@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using PlayFab;
 using PlayFab.ClientModels;
-using PlayFab.MultiplayerModels;
-using UnityEngine.Serialization;
+using Unity.VisualScripting;
+using UnityEngine.UI;
 
 public class AccountAPIManager : MonoBehaviour
 {
@@ -32,9 +31,13 @@ public class AccountAPIManager : MonoBehaviour
     [Header("Leaderboard Configuration")]
     [SerializeField] private int startingPosition = 0;
     [SerializeField] private int rowCount = 10;
+    
+    [Header("Password Visibility Assets")]
+    [SerializeField] private Sprite closedEye;
+    [SerializeField] private Sprite openEye;
 
     [Header("DEBUG ELEMENTS")]
-    [SerializeField] private TMP_InputField cheatScore; 
+    [SerializeField] private TMP_InputField cheatScore;
 
     public void LoginEvent()
     {
@@ -58,6 +61,30 @@ public class AccountAPIManager : MonoBehaviour
                 loginOutput.text = "Invalid Credentials";
             }
         );
+    }
+
+    public void LoginUsernameEvent()
+    {
+        var req = new LoginWithPlayFabRequest
+        {
+            Username = loginEmailField.text,
+            Password = loginPasswordField.text,
+        };
+        PlayFabClientAPI.LoginWithPlayFab(req,
+            success =>
+            {
+                Debug.Log("Login Success | " + success.PlayFabId);
+                menuShifter.GoGame();
+                loginEmailField.text = "";
+                loginPasswordField.text = "";
+                loginOutput.text = "";
+            },
+            failure =>
+            {
+                Debug.Log("Failed To Login | " + failure.ErrorMessage);
+                loginOutput.text = "Invalid Credentials";
+            }
+            );
     }
 
     public void RegisterEvent()
@@ -164,6 +191,31 @@ public class AccountAPIManager : MonoBehaviour
     public void LogoutEvent()
     {
         PlayFabClientAPI.ForgetAllCredentials();
+    }
+
+    public void PasswordFieldVisibilityToggle(TMP_InputField inputField)
+    {
+        switch (inputField.contentType)
+        {
+            case TMP_InputField.ContentType.Standard:
+                inputField.contentType = TMP_InputField.ContentType.Password;
+                break;
+            case TMP_InputField.ContentType.Password:
+                inputField.contentType = TMP_InputField.ContentType.Standard;
+                break;
+            default:
+                inputField.contentType = TMP_InputField.ContentType.Password;
+                break;
+        }
+        inputField.ForceLabelUpdate();
+    }
+
+    public void PasswordIconToggle(Image image)
+    {
+        if (image.sprite == closedEye)
+            image.sprite = openEye;
+        else
+            image.sprite = closedEye;
     }
 
     public void DEBUG_AUTOLOGIN()
