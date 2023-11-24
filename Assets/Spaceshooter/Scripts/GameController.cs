@@ -1,8 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
+using PlayFab;
+using PlayFab.ClientModels;
+using PlayFab.EconomyModels;
 
 public class GameController : MonoBehaviour {
 

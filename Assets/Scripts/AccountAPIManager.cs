@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 public class AccountAPIManager : MonoBehaviour
 {
+    [SerializeField] private PlayerData playerData;
     [SerializeField] private MenuShifter menuShifter;
     
     [Header("Login Panel Elements")]
@@ -101,6 +102,11 @@ public class AccountAPIManager : MonoBehaviour
             {
                 Debug.Log("Register Success ID | " + success.PlayFabId);
                 registerOutput.text = "Successfully Registered";
+
+                playerData.hoursPlayed = 0;
+                playerData.minutesPlayed = 0;
+                playerData.matchesPlayed = 0;
+                playerData.UploadPlayerData();
             },
             failure =>
             {
@@ -238,5 +244,25 @@ public class AccountAPIManager : MonoBehaviour
     public void DEBUG_CHEATSCORE()
     {
         LeaderboardSubmitEvent(Convert.ToInt32(cheatScore.text));
+    }
+
+    public void DEBUG_SETUPPLAYERSTATS()
+    {
+        var req = new LoginWithEmailAddressRequest()
+        {
+            Email = "loser@mail.com",
+            Password = "supperman"
+        };
+        PlayFabClientAPI.LoginWithEmailAddress(req,
+            success =>
+            {
+                Debug.Log("DEBUG SIGNED IN | " + success.PlayFabId);
+                playerData.hoursPlayed = 1;
+                playerData.minutesPlayed = 2;
+                playerData.matchesPlayed = 5;
+                playerData.UploadPlayerData();
+            },
+            failure => { Debug.Log("DEBUG SIGN IN FAILED | " + failure.ErrorMessage);}
+            );
     }
 }

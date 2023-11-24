@@ -3,7 +3,23 @@ guid: 67606a35a77bdff4f984da7bf1358da6
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - playerData: {fileID: 11400000, guid: 4b59289663ae29f57a13ecb9c388f0e8, type: 2}
+  - menuShifter: {instanceID: 0}
+  - loginEmailField: {instanceID: 0}
+  - loginPasswordField: {instanceID: 0}
+  - loginOutput: {instanceID: 0}
+  - registerUsernameField: {instanceID: 0}
+  - registerPasswordField: {instanceID: 0}
+  - registerEmailField: {instanceID: 0}
+  - registerOutput: {instanceID: 0}
+  - names: {instanceID: 0}
+  - scores: {instanceID: 0}
+  - positions: {instanceID: 0}
+  - leaderboardOutput: {instanceID: 0}
+  - closedEye: {instanceID: 0}
+  - openEye: {instanceID: 0}
+  - cheatScore: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

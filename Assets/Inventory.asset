@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allShipIDs: []
   allShipPrefabs: []
-  shipsOwned: []
+  shipsOwned:
+  - {fileID: 1871664021623010, guid: cab905453db3646c3a3620a6b4848cd8, type: 3}
+  defaultShip: {fileID: 1871664021623010, guid: cab905453db3646c3a3620a6b4848cd8, type: 3}

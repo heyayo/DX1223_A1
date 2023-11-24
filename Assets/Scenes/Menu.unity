@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4465878, g: 0.4964224, b: 0.57482475, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1916,6 +1916,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 957288995}
     m_Modifications:
+    - target: {fileID: 4383732930563322486, guid: 0f60ff034311f85268d467447537c671, type: 3}
+      propertyPath: field
+      value: 
+      objectReference: {fileID: 505912697}
     - target: {fileID: 5162220371418175175, guid: 0f60ff034311f85268d467447537c671, type: 3}
       propertyPath: m_Name
       value: PasswordVisibilityToggle
@@ -8349,6 +8353,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1542865786}
     m_Modifications:
+    - target: {fileID: 4383732930563322486, guid: 0f60ff034311f85268d467447537c671, type: 3}
+      propertyPath: field
+      value: 
+      objectReference: {fileID: 1329724550}
     - target: {fileID: 5162220371418175175, guid: 0f60ff034311f85268d467447537c671, type: 3}
       propertyPath: m_Name
       value: PasswordVisibilityToggle
