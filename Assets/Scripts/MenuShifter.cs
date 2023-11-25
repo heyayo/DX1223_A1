@@ -1,7 +1,7 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using PlayFab;
 
 public class MenuShifter : MonoBehaviour
 {
@@ -18,7 +18,14 @@ public class MenuShifter : MonoBehaviour
 	{ textBox.text = ""; }
 
 	public void GoGame()
+	{ SceneManager.LoadScene("GameMenus"); }
+
+	public void BackToAccountScreen()
 	{
-		SceneManager.LoadScene("GameMenus");
+		PlayFabClientAPI.ForgetAllCredentials();
+		SceneManager.LoadScene("Menu");
 	}
+
+	public void PlayGame()
+	{ SceneManager.LoadScene("Main"); }
 }

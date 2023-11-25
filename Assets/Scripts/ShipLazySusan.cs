@@ -1,20 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
-using UnityEngine.Serialization;
+using TMPro;
 
 public class ShipLazySusan : MonoBehaviour
 {
-    [FormerlySerializedAs("inventory")]
     [Header("Configuration")]
     [SerializeField] private PlayerData playerData;
     [SerializeField] private Transform anchor;
     [SerializeField] private GameObject[] selection;
     [SerializeField] private uint currentlySelected;
+    [SerializeField] private TMP_Text shipTitle;
 
     public void Start()
     {
+        shipTitle.text = "LOADING SHIPS...";
         playerData.Initialize(); // Call Once
         playerData.FetchInventory(
             () =>
@@ -23,12 +21,13 @@ public class ShipLazySusan : MonoBehaviour
                 // Instantiate Prefabs into Anchor Parent
                 for (int i = 0; i < playerData.shipsOwned.Count; ++i)
                 {
-                    GameObject obj = Instantiate(playerData.shipsOwned[i],anchor.position,anchor.rotation,anchor);
+                    GameObject obj = Instantiate(playerData.shipsOwned[i],anchor.position,anchor.rotation,anchor).gameObject;
                     obj.SetActive(false);
                     obj.GetComponent<PlayerControl>().enabled = false;
                     selection[i] = obj;
                 }
                 selection[0].SetActive(true);
+                shipTitle.text = selection[0].name;
             }
             );
     }
@@ -43,4 +42,7 @@ public class ShipLazySusan : MonoBehaviour
         currentlySelected = (currentlySelected - direction) % (uint)selection.Length;
         selection[currentlySelected].SetActive(true);
     }
+
+    public void ChangeShipPreviewVisibility(bool visibility)
+    { anchor.gameObject.SetActive(visibility); }
 }

@@ -4,7 +4,6 @@ using UnityEngine;
 using TMPro;
 using PlayFab;
 using PlayFab.ClientModels;
-using Unity.VisualScripting;
 using UnityEngine.UI;
 
 public class AccountAPIManager : MonoBehaviour
@@ -65,25 +64,34 @@ public class AccountAPIManager : MonoBehaviour
     }
 
     public void LoginUsernameEvent()
+    { Login(loginEmailField.text,loginPasswordField.text,
+        () =>
+        {
+            loginEmailField.text = "";
+            loginPasswordField.text = "";
+            loginOutput.text = "";
+        },
+        () => { loginOutput.text = "Invalid Credentials"; });
+    }
+
+    private void Login(string username, string password, Action successAction = null, Action failAction = null)
     {
         var req = new LoginWithPlayFabRequest
         {
-            Username = loginEmailField.text,
-            Password = loginPasswordField.text,
+            Username = username,
+            Password = password,
         };
         PlayFabClientAPI.LoginWithPlayFab(req,
             success =>
             {
                 Debug.Log("Login Success | " + success.PlayFabId);
+                if (successAction != null) successAction();
                 menuShifter.GoGame();
-                loginEmailField.text = "";
-                loginPasswordField.text = "";
-                loginOutput.text = "";
             },
             failure =>
             {
                 Debug.Log("Failed To Login | " + failure.ErrorMessage);
-                loginOutput.text = "Invalid Credentials";
+                if (failAction != null) failAction();
             }
             );
     }
@@ -103,10 +111,10 @@ public class AccountAPIManager : MonoBehaviour
                 Debug.Log("Register Success ID | " + success.PlayFabId);
                 registerOutput.text = "Successfully Registered";
 
-                playerData.hoursPlayed = 0;
-                playerData.minutesPlayed = 0;
-                playerData.matchesPlayed = 0;
-                playerData.UploadPlayerData();
+                playerData.playStatistics.stat_minutesPlayed = 0;
+                playerData.playStatistics.stat_matchesPlayed = 0;
+                Login(registerUsernameField.text,registerPasswordField.text,
+                    () => { playerData.UploadPlayerData(); });
             },
             failure =>
             {
@@ -257,10 +265,26 @@ public class AccountAPIManager : MonoBehaviour
             success =>
             {
                 Debug.Log("DEBUG SIGNED IN | " + success.PlayFabId);
-                playerData.hoursPlayed = 1;
-                playerData.minutesPlayed = 2;
-                playerData.matchesPlayed = 5;
+                playerData.playStatistics.stat_minutesPlayed = 2;
+                playerData.playStatistics.stat_matchesPlayed = 5;
                 playerData.UploadPlayerData();
+            },
+            failure => { Debug.Log("DEBUG SIGN IN FAILED | " + failure.ErrorMessage);}
+            );
+    }
+
+    public void DEBUG_LOADPLAYERSTATS()
+    {
+        var req = new LoginWithEmailAddressRequest()
+        {
+            Email = "loser@mail.com",
+            Password = "supperman"
+        };
+        PlayFabClientAPI.LoginWithEmailAddress(req,
+            success =>
+            {
+                Debug.Log("DEBUG SIGNED IN | " + success.PlayFabId);
+                playerData.FetchPlayerData();
             },
             failure => { Debug.Log("DEBUG SIGN IN FAILED | " + failure.ErrorMessage);}
             );
