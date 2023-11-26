@@ -20,3 +20,7 @@ MonoBehaviour:
   playStatistics:
     stat_minutesPlayed: 2
     stat_matchesPlayed: 5
+  achievements:
+    achievement_afk: 1
+    achievement_wave30: 1
+    achievement_allShips: 1
