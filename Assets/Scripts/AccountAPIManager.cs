@@ -114,7 +114,7 @@ public class AccountAPIManager : MonoBehaviour
                 playerData.playStatistics.stat_minutesPlayed = 0;
                 playerData.playStatistics.stat_matchesPlayed = 0;
                 Login(registerUsernameField.text,registerPasswordField.text,
-                    () => { playerData.UploadPlayerData(); });
+                    () => { playerData.UploadStats(); });
             },
             failure =>
             {
@@ -267,7 +267,7 @@ public class AccountAPIManager : MonoBehaviour
                 Debug.Log("DEBUG SIGNED IN | " + success.PlayFabId);
                 playerData.playStatistics.stat_minutesPlayed = 2;
                 playerData.playStatistics.stat_matchesPlayed = 5;
-                playerData.UploadPlayerData();
+                playerData.UploadStats();
             },
             failure => { Debug.Log("DEBUG SIGN IN FAILED | " + failure.ErrorMessage);}
             );
@@ -284,7 +284,7 @@ public class AccountAPIManager : MonoBehaviour
             success =>
             {
                 Debug.Log("DEBUG SIGNED IN | " + success.PlayFabId);
-                playerData.FetchPlayerData();
+                playerData.FetchStats();
             },
             failure => { Debug.Log("DEBUG SIGN IN FAILED | " + failure.ErrorMessage);}
             );

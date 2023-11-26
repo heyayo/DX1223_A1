@@ -11,11 +11,20 @@ public struct PlayStatistics
     public int stat_matchesPlayed;
 }
 
+[Serializable]
+public struct Achievements
+{
+    public bool achievement_afk;
+    public bool achievement_wave30;
+    public bool achievement_allShips;
+}
+
 [CreateAssetMenu(menuName = "Static Data/Player Data", fileName = "Player Data")]
 public class PlayerData : ScriptableObject
 {
     private static readonly string _defaultShipID = "ship_default";
-    private static readonly string _playStatisticsKey = "stat_playtime";
+    private static readonly string _playStatisticsKey = "playtime";
+    private static readonly string _achievementsKey = "achievements";
     
     [Header("All Ships In The Game")]
     [SerializeField] private List<Product> allShipsInGameList = new List<Product>();
@@ -30,7 +39,8 @@ public class PlayerData : ScriptableObject
     public uint selectedShipIndex = 0;
 
     [Header("Player's General Statistics")]
-    public PlayStatistics playStatistics;
+    public PlayStatistics playStatistics = new PlayStatistics();
+    public Achievements achievements = new Achievements();
 
     public static PlayerData RetrieveData()
     { return Resources.Load<PlayerData>("Inventory"); }
@@ -77,16 +87,18 @@ public class PlayerData : ScriptableObject
             );
     }
 
-    public void UploadPlayerData()
+    public void UploadStats()
     {
         string pStats = JsonUtility.ToJson(playStatistics);
+        string ach = JsonUtility.ToJson(achievements);
         
         PlayFabClientAPI.UpdateUserData(
             new UpdateUserDataRequest
             {
                 Data = new Dictionary<string, string>
                 {
-                    {_playStatisticsKey,pStats}
+                    {_playStatisticsKey,pStats},
+                    {_achievementsKey,ach}
                 }
             },
             success =>
@@ -95,13 +107,14 @@ public class PlayerData : ScriptableObject
             );
     }
 
-    public void FetchPlayerData()
+    public void FetchStats()
     {
         PlayFabClientAPI.GetUserData(new GetUserDataRequest(),
             success =>
             {
                 Debug.Log("Fetched Player Data");
                 playStatistics = JsonUtility.FromJson<PlayStatistics>(success.Data[_playStatisticsKey].Value);
+                achievements = JsonUtility.FromJson<Achievements>(success.Data[_achievementsKey].Value);
             },
             FailCode
             );
