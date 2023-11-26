@@ -7,7 +7,6 @@ public class ShipLazySusan : MonoBehaviour
     [SerializeField] private PlayerData playerData;
     [SerializeField] private Transform anchor;
     [SerializeField] private GameObject[] selection;
-    [SerializeField] private uint currentlySelected;
     [SerializeField] private TMP_Text shipTitle;
 
     public void Start()
@@ -23,11 +22,12 @@ public class ShipLazySusan : MonoBehaviour
                 {
                     GameObject obj = Instantiate(playerData.shipsOwned[i],anchor.position,anchor.rotation,anchor).gameObject;
                     obj.SetActive(false);
-                    obj.GetComponent<PlayerControl>().enabled = false;
+                    obj.GetComponent<ShipControl>().enabled = false;
                     selection[i] = obj;
                 }
                 selection[0].SetActive(true);
                 shipTitle.text = selection[0].name;
+                playerData.selectedShipIndex = 0;
             }
             );
     }
@@ -38,9 +38,9 @@ public class ShipLazySusan : MonoBehaviour
     public void Rotate(int dir)
     {
         uint direction = (uint)dir; // Required because Unity Inspector does not like unsigned integers
-        selection[currentlySelected].SetActive(false);
-        currentlySelected = (currentlySelected - direction) % (uint)selection.Length;
-        selection[currentlySelected].SetActive(true);
+        selection[playerData.selectedShipIndex].SetActive(false);
+        playerData.selectedShipIndex = (playerData.selectedShipIndex - direction) % (uint)selection.Length;
+        selection[playerData.selectedShipIndex].SetActive(true);
     }
 
     public void ChangeShipPreviewVisibility(bool visibility)

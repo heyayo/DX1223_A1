@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d704f386bf87246c2ab3a34f17ab11be, type: 3}
   m_Name: Inventory
   m_EditorClassIdentifier: 
-  allShipsInGameList:
-  - {fileID: 4843715015100625528, guid: 2e96d3cdc53e33d40a3f719f35e708e4, type: 3}
-  defaultShip: {fileID: 4843715015100625528, guid: cab905453db3646c3a3620a6b4848cd8, type: 3}
+  allShipsInGameList: []
+  defaultShip: {fileID: 3427211338575987713, guid: 46a6eca679bceed45be98971c86b8031, type: 3}
   shipsOwned:
-  - {fileID: 1871664021623010, guid: cab905453db3646c3a3620a6b4848cd8, type: 3}
+  - {fileID: 3427211338575987713, guid: 46a6eca679bceed45be98971c86b8031, type: 3}
+  selectedShipIndex: 0
   playStatistics:
     stat_minutesPlayed: 2
     stat_matchesPlayed: 5

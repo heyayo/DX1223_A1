@@ -27,6 +27,7 @@ public class PlayerData : ScriptableObject
     [Header("Player's Inventory")]
     public Dictionary<string, Product> shipsOwnedIndex = new Dictionary<string, Product>(); // All Ships player owned index-able by ItemID
     public List<Product> shipsOwned = new List<Product>(); // Raw List of ships owned
+    public uint selectedShipIndex = 0;
 
     [Header("Player's General Statistics")]
     public PlayStatistics playStatistics;

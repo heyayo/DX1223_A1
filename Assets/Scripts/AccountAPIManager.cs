@@ -38,7 +38,7 @@ public class AccountAPIManager : MonoBehaviour
 
     [Header("DEBUG ELEMENTS")]
     [SerializeField] private TMP_InputField cheatScore;
-
+    
     public void LoginEvent()
     {
         var req = new LoginWithEmailAddressRequest

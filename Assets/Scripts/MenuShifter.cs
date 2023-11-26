@@ -27,5 +27,5 @@ public class MenuShifter : MonoBehaviour
 	}
 
 	public void PlayGame()
-	{ SceneManager.LoadScene("Main"); }
+	{ SceneManager.LoadScene("GameScene"); }
 }
