@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class ShipLazySusan : MonoBehaviour
 {
@@ -8,9 +9,15 @@ public class ShipLazySusan : MonoBehaviour
     [SerializeField] private Transform anchor;
     [SerializeField] private GameObject[] selection;
     [SerializeField] private TMP_Text shipTitle;
+    
+    [Header("Buttons To Delay")]
+    [SerializeField] private Button shopButton;
+    [SerializeField] private Button playButton;
 
     public void Start()
     {
+        shopButton.gameObject.SetActive(false);
+        playButton.gameObject.SetActive(true);
         shipTitle.text = "LOADING SHIPS...";
         playerData.Initialize(); // Call Once
         playerData.FetchInventory(
@@ -28,6 +35,8 @@ public class ShipLazySusan : MonoBehaviour
                 selection[0].SetActive(true);
                 shipTitle.text = selection[0].name;
                 playerData.selectedShipIndex = 0;
+                shopButton.gameObject.SetActive(true);
+                playButton.gameObject.SetActive(true);
             }
             );
     }

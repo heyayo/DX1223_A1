@@ -17,6 +17,9 @@ public struct Achievements
     public bool achievement_afk;
     public bool achievement_wave30;
     public bool achievement_allShips;
+    public bool achievement_maxLevel;
+    public bool achievement_prestiged;
+    public bool achievement_breenseerayyang; // Secret Achievement
 }
 
 [CreateAssetMenu(menuName = "Static Data/Player Data", fileName = "Player Data")]

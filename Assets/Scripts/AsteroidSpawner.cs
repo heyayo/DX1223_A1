@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,9 +11,11 @@ public class AsteroidSpawner : MonoBehaviour
     [SerializeField] private Asteroid[] asteroids;
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] public Transform player;
+    [SerializeField] private PlayerData data;
+    [SerializeField] private TMP_Text waveCounter;
 
     [Header("Spawn Options")]
-    [SerializeField] private float frequency;
+    [SerializeField] public float frequency;
     [SerializeField] private int density;
     [SerializeField] private int densityRiseRate;
     [SerializeField] private float aggression;
@@ -45,6 +48,7 @@ public class AsteroidSpawner : MonoBehaviour
         asteroidsDestroyed = 0;
         asteroidsInWave = 0;
         waves = 0;
+        waveCounter.text = "0";
 
         Instance = this;
     }
@@ -98,5 +102,8 @@ public class AsteroidSpawner : MonoBehaviour
         aggression = Mathf.Clamp(aggression, 0, aggressionCap);
 
         ++waves;
+        waveCounter.text = waves.ToString();
+        // Give Wave 30 Achievement
+        if (waves >= 30) data.achievements.achievement_wave30 = true;
     }
 }

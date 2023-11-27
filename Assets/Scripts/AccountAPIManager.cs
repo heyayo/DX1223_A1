@@ -74,8 +74,11 @@ public class AccountAPIManager : MonoBehaviour
         () => { loginOutput.text = "Invalid Credentials"; });
     }
 
+    private bool loggingIn = false;
     private void Login(string username, string password, Action successAction = null, Action failAction = null)
     {
+        if (loggingIn) return;
+        loggingIn = true;
         var req = new LoginWithPlayFabRequest
         {
             Username = username,
@@ -84,20 +87,25 @@ public class AccountAPIManager : MonoBehaviour
         PlayFabClientAPI.LoginWithPlayFab(req,
             success =>
             {
+                loggingIn = false;
                 Debug.Log("Login Success | " + success.PlayFabId);
                 if (successAction != null) successAction();
                 menuShifter.GoGame();
             },
             failure =>
             {
+                loggingIn = false;
                 Debug.Log("Failed To Login | " + failure.ErrorMessage);
                 if (failAction != null) failAction();
             }
             );
     }
 
+    private bool registering = false;
     public void RegisterEvent()
     {
+        if (registering) return;
+        registering = true;
         var req = new RegisterPlayFabUserRequest
         {
             Email = registerEmailField.text,
@@ -108,6 +116,7 @@ public class AccountAPIManager : MonoBehaviour
         PlayFabClientAPI.RegisterPlayFabUser(req,
             success =>
             {
+                registering = false;
                 Debug.Log("Register Success ID | " + success.PlayFabId);
                 registerOutput.text = "Successfully Registered";
 
@@ -118,6 +127,7 @@ public class AccountAPIManager : MonoBehaviour
             },
             failure =>
             {
+                registering = false;
                 Debug.Log("Failed To Register | " + failure.ErrorMessage + " | " + failure.Error.ToString());
                 registerOutput.text = "Failed To Register";
                 switch (failure.Error)
@@ -232,8 +242,11 @@ public class AccountAPIManager : MonoBehaviour
             image.sprite = closedEye;
     }
 
+    private bool autologgingin = false;
     public void DEBUG_AUTOLOGIN()
     {
+        if (autologgingin) return;
+        autologgingin = true;
         var req = new LoginWithEmailAddressRequest()
         {
             Email = "loser@mail.com",
@@ -242,10 +255,15 @@ public class AccountAPIManager : MonoBehaviour
         PlayFabClientAPI.LoginWithEmailAddress(req,
             success =>
             {
+                autologgingin = false;
                 Debug.Log("DEBUG SIGNED IN | " + success.PlayFabId);
                 menuShifter.GoGame();
             },
-            failure => { Debug.Log("DEBUG SIGN IN FAILED | " + failure.ErrorMessage);}
+            failure =>
+            {
+                autologgingin = false;
+                Debug.Log("DEBUG SIGN IN FAILED | " + failure.ErrorMessage);
+            }
                 );
     }
 

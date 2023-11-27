@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.Pool;
 
 [RequireComponent(typeof(Rigidbody))]
 public class ShipControl : MonoBehaviour
@@ -24,7 +22,6 @@ public class ShipControl : MonoBehaviour
     [SerializeField] private float fireRate;
     [SerializeField] private bool automaticWeapons = false;
 
-    private ObjectPool<Rigidbody> _projectiles;
     private Rigidbody _rigidbody;
     private Transform _transform;
     private float _thrust;
@@ -46,29 +43,6 @@ public class ShipControl : MonoBehaviour
         _transform.rotation = Quaternion.Euler(-90, 0, 0);
 
         _chosenType = automaticWeapons ? Input.GetKey : Input.GetKeyDown;
-
-        _projectiles = new ObjectPool<Rigidbody>
-            (
-            () =>
-            {
-                var obj = Instantiate(projectile, firePoint.position, Quaternion.identity);
-                obj.rotation = Quaternion.Euler(0,0,_yaw);
-                return obj;
-            },
-            obj =>
-            {
-                obj.gameObject.SetActive(true);
-                StartCoroutine(DespawnProjectile(obj));
-            },
-            obj =>
-            {
-                obj.velocity = Vector3.zero;
-                obj.gameObject.SetActive(false);
-            },
-            obj =>
-            { Destroy(obj.gameObject); }
-            );
-        
     }
 
     private void Update()
@@ -103,23 +77,24 @@ public class ShipControl : MonoBehaviour
 
     private void Shoot()
     {
+        // TODO Fire Rate
         if (_chosenType(KeyCode.Space))
         {
-            var obj = _projectiles.Get();
-            obj.AddRelativeForce(0,projectileVelocity,0,ForceMode.Impulse);
+            var rot = Quaternion.Euler(0, 0, _yaw);
+            var obj = Instantiate(projectile,firePoint.position,Quaternion.identity);
+            Transform objt = obj.transform;
+            objt.rotation = rot;
+            Vector3 velo = rot * new Vector3(0, projectileVelocity, 0);
+            obj.AddRelativeForce(velo,ForceMode.Impulse);
+            Destroy(obj.gameObject,2);
         }
-    }
-
-    private IEnumerator DespawnProjectile(Rigidbody obj)
-    {
-        yield return new WaitForSeconds(2);
-        _projectiles.Release(obj);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Asteroid"))
         {
+            GameScript.Instance.EndGame();
             // TODO Particle Effects
             Destroy(gameObject);
         }
