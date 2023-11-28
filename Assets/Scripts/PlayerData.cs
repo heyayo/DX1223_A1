@@ -34,8 +34,9 @@ public class PlayerData : ScriptableObject
     [SerializeField] public bool isGuest;
     
     [Header("All Ships In The Game")]
-    [SerializeField] private List<Product> allShipsInGameList = new List<Product>();
+    [SerializeField] private List<Product> allPurchasableItemsList = new List<Product>();
     public Dictionary<string, Product> allShipsInGame = new Dictionary<string, Product>(); // All The Ships in Game tied by ItemID
+    public Dictionary<string, Product> allPurchasableItems = new Dictionary<string, Product>();
     
     [Header("Default Ship")]
     [SerializeField] private Product defaultShip;
@@ -57,8 +58,14 @@ public class PlayerData : ScriptableObject
     {
         allShipsInGame.Clear();
         allShipsInGame.Add(_defaultShipID,defaultShip);
-        for (int i = 0; i < allShipsInGameList.Count; ++i)
-            allShipsInGame.Add(allShipsInGameList[i].productID,allShipsInGameList[i]);
+
+        foreach (var item in allPurchasableItemsList)
+        {
+            allPurchasableItems.Add(item.productID,item);
+            if (item.productTag == Product.PRODUCT_TAG.SHIP)
+                allShipsInGame.Add(item.productID,item);
+        }
+        
         xr_credits = 0;
     }
 

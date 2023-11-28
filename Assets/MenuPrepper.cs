@@ -14,12 +14,6 @@ public class MenuPrepper : MonoBehaviour
     {
         Instance = this;
         data = PlayerData.RetrieveData();
-        UpdateCredits();
         shopPanel.SetActive(false);
-    }
-
-    public void UpdateCredits()
-    {
-        currencyText.text = "XRCredits: " + data.xr_credits;
     }
 }

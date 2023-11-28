@@ -17,7 +17,7 @@ public class ProductPanel : MonoBehaviour
     private void Awake()
     { data = PlayerData.RetrieveData(); }
 
-    public void Start()
+    public void Create()
     {
         productTitle.text = product.productName;
         productPreview.sprite = product.productImage;
@@ -54,7 +54,6 @@ public class ProductPanel : MonoBehaviour
                 purchaseButton.enabled = false;
                 data.FetchInventory(()=>
                 {
-                    MenuPrepper.Instance.UpdateCredits();
                     ShipLazySusan.Instance.ReSeatShips();
                 });
             }, FailCode

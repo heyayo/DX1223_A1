@@ -172,6 +172,7 @@ MonoBehaviour:
   productName: WHITER
   productID: ship_white
   productImage: {fileID: 21300000, guid: ceafcc76e3d15a8f183a9607f85b07ce, type: 3}
+  productTag: 0
 --- !u!1 &4344766620850565751
 GameObject:
   m_ObjectHideFlags: 0

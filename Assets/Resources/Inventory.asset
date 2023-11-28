@@ -13,20 +13,20 @@ MonoBehaviour:
   m_Name: Inventory
   m_EditorClassIdentifier: 
   isGuest: 0
-  allShipsInGameList:
+  allPurchasableItemsList:
   - {fileID: 46983395588436522, guid: 9e0b067cd5a51057f8e014c82e37d8f2, type: 3}
   defaultShip: {fileID: 3427211338575987713, guid: 46a6eca679bceed45be98971c86b8031, type: 3}
   shipsOwned:
   - {fileID: 3427211338575987713, guid: 46a6eca679bceed45be98971c86b8031, type: 3}
-  xr_credits: 120
+  xr_credits: 0
   selectedShipIndex: 0
   playStatistics:
     stat_minutesPlayed: 2
     stat_matchesPlayed: 5
   achievements:
-    achievement_afk: 1
-    achievement_wave30: 1
-    achievement_allShips: 1
+    achievement_afk: 0
+    achievement_wave30: 0
+    achievement_allShips: 0
     achievement_maxLevel: 0
     achievement_prestiged: 0
     achievement_breenseerayyang: 0
