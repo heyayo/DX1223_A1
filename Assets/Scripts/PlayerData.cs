@@ -28,6 +28,10 @@ public class PlayerData : ScriptableObject
     private static readonly string _defaultShipID = "ship_default";
     private static readonly string _playStatisticsKey = "playtime";
     private static readonly string _achievementsKey = "achievements";
+    private static readonly string _xrCreditsKey = "XD";
+
+    [Header("Guest Settings")]
+    [SerializeField] public bool isGuest;
     
     [Header("All Ships In The Game")]
     [SerializeField] private List<Product> allShipsInGameList = new List<Product>();
@@ -39,6 +43,7 @@ public class PlayerData : ScriptableObject
     [Header("Player's Inventory")]
     public Dictionary<string, Product> shipsOwnedIndex = new Dictionary<string, Product>(); // All Ships player owned index-able by ItemID
     public List<Product> shipsOwned = new List<Product>(); // Raw List of ships owned
+    public int xr_credits = 0;
     public uint selectedShipIndex = 0;
 
     [Header("Player's General Statistics")]
@@ -54,6 +59,7 @@ public class PlayerData : ScriptableObject
         allShipsInGame.Add(_defaultShipID,defaultShip);
         for (int i = 0; i < allShipsInGameList.Count; ++i)
             allShipsInGame.Add(allShipsInGameList[i].productID,allShipsInGameList[i]);
+        xr_credits = 0;
     }
 
     public void AddShip(string shipID)
@@ -84,6 +90,8 @@ public class PlayerData : ScriptableObject
                     shipsOwnedIndex.Add(item.ItemId,allShipsInGame[item.ItemId]);
                     shipsOwned.Add(allShipsInGame[item.ItemId]);
                 }
+
+                xr_credits = success.VirtualCurrency["XD"];
                 action();
             },
             FailCode
@@ -121,6 +129,36 @@ public class PlayerData : ScriptableObject
             },
             FailCode
             );
+    }
+
+    public void GiveCurrency(int amount)
+    {
+        PlayFabClientAPI.AddUserVirtualCurrency(new AddUserVirtualCurrencyRequest
+        {
+            VirtualCurrency = _xrCreditsKey,
+            Amount = amount
+        },
+            success =>
+            {
+                Debug.Log("New Balance: " + success.Balance + success.VirtualCurrency);
+                xr_credits = success.Balance;
+            },
+        failure => { Debug.LogError(failure.GenerateErrorReport());});
+    }
+
+    public void TakeCurrency(int amount)
+    {
+        PlayFabClientAPI.SubtractUserVirtualCurrency(new SubtractUserVirtualCurrencyRequest
+        {
+            VirtualCurrency = _xrCreditsKey,
+            Amount = amount
+        },
+        success =>
+        {
+            Debug.Log("New Balance: " + success.Balance + success.VirtualCurrency);
+            xr_credits = success.Balance;
+        },
+        failure => { Debug.LogError(failure.GenerateErrorReport());});
     }
 
     private void FailCode(PlayFabError error)

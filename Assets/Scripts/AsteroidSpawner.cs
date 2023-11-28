@@ -15,6 +15,7 @@ public class AsteroidSpawner : MonoBehaviour
     [SerializeField] private TMP_Text waveCounter;
 
     [Header("Spawn Options")]
+    [SerializeField] public float grace;
     [SerializeField] public float frequency;
     [SerializeField] private int density;
     [SerializeField] private int densityRiseRate;
@@ -55,7 +56,7 @@ public class AsteroidSpawner : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(NextWave());
+        StartCoroutine(GracePeriod());
     }
 
     public void SpawnWave()
@@ -105,5 +106,11 @@ public class AsteroidSpawner : MonoBehaviour
         waveCounter.text = waves.ToString();
         // Give Wave 30 Achievement
         if (waves >= 30) data.achievements.achievement_wave30 = true;
+    }
+
+    private IEnumerator GracePeriod()
+    {
+        yield return new WaitForSeconds(grace);
+        StartNextWave();
     }
 }

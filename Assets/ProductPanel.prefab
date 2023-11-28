@@ -95,6 +95,7 @@ MonoBehaviour:
   productTitle: {fileID: 2950993609465221677}
   productPreview: {fileID: 6529174199535924219}
   purchaseButton: {fileID: 7440588250825920492}
+  purchaseText: {fileID: 6600629444873847841}
   product: {fileID: 0}
 --- !u!1 &6503593134892741971
 GameObject:
@@ -411,6 +412,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 434093831888495938, guid: fcd0dcdbef061c4339e7d2280057decd, type: 3}
   m_PrefabInstance: {fileID: 5668918679072835806}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6600629444873847841 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1528459713774488831, guid: fcd0dcdbef061c4339e7d2280057decd, type: 3}
+  m_PrefabInstance: {fileID: 5668918679072835806}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7440588250825920492 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3021436062835279666, guid: fcd0dcdbef061c4339e7d2280057decd, type: 3}

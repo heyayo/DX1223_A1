@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4845454851781174080}
   - component: {fileID: 46983395588436522}
   m_Layer: 0
-  m_Name: ship_template
+  m_Name: ship_white
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,8 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8940b037a9b441c4cbd3d2b446838424, type: 2}
-  - {fileID: 2100000, guid: f36c72c738c55f741afcd674a0b1245f, type: 2}
+  - {fileID: 2100000, guid: 9191b082c7eb0d981940987d42719f0a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -149,15 +148,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93a2e9e3cd9fab14892bad5dae1760bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tiltRange: 30
-  tiltSpeed: 125
-  rotarySpeed: 50
-  thrustSpeed: 8
+  tiltRange: 40
+  tiltSpeed: 75
+  rotarySpeed: 80
+  thrustSpeed: 16
   projectile: {fileID: 8066728070128561959, guid: 25f43ab836e617b4bb78888259c34965, type: 3}
   firePoint: {fileID: 7840784646019786990}
   projectileVelocity: 5
   fireRate: 0
-  automaticWeapons: 0
+  automaticWeapons: 1
 --- !u!114 &46983395588436522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,9 +169,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac59fefd52a6a604cba679f2745c236f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productName: TEMPLATE SHIP
-  productID: ship_template
-  productImage: {fileID: 21300000, guid: fb8b286492ec906beb8e84605a8d2d05, type: 3}
+  productName: WHITER
+  productID: ship_white
+  productImage: {fileID: 21300000, guid: ceafcc76e3d15a8f183a9607f85b07ce, type: 3}
 --- !u!1 &4344766620850565751
 GameObject:
   m_ObjectHideFlags: 0

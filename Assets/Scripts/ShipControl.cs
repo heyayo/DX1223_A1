@@ -29,6 +29,7 @@ public class ShipControl : MonoBehaviour
     private float _pitch;
     private float _yaw;
     private float _netFireRate;
+    private float _lastFire;
 
     private delegate bool FireType(KeyCode key);
 
@@ -43,6 +44,7 @@ public class ShipControl : MonoBehaviour
         _transform.rotation = Quaternion.Euler(-90, 0, 0);
 
         _chosenType = automaticWeapons ? Input.GetKey : Input.GetKeyDown;
+        _netFireRate = 1 / fireRate;
     }
 
     private void Update()
@@ -77,9 +79,11 @@ public class ShipControl : MonoBehaviour
 
     private void Shoot()
     {
+        _lastFire += Time.deltaTime;
         // TODO Fire Rate
-        if (_chosenType(KeyCode.Space))
+        if (_chosenType(KeyCode.Space) && _lastFire > _netFireRate)
         {
+            _lastFire = 0f;
             var rot = Quaternion.Euler(0, 0, _yaw);
             var obj = Instantiate(projectile,firePoint.position,Quaternion.identity);
             Transform objt = obj.transform;

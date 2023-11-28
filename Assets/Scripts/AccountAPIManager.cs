@@ -74,7 +74,7 @@ public class AccountAPIManager : MonoBehaviour
         () => { loginOutput.text = "Invalid Credentials"; });
     }
 
-    private bool loggingIn = false;
+    private static bool loggingIn = false;
     private void Login(string username, string password, Action successAction = null, Action failAction = null)
     {
         if (loggingIn) return;
@@ -101,7 +101,32 @@ public class AccountAPIManager : MonoBehaviour
             );
     }
 
-    private bool registering = false;
+    private static bool anonymous = false;
+    public void AnonymousLoginEvent()
+    {
+        if (anonymous) return;
+        anonymous = true;
+        
+        PlayFabClientAPI.LoginWithCustomID(new LoginWithCustomIDRequest
+        {
+            CreateAccount = true,
+            CustomId = "guest"
+        },
+        success =>
+        {
+            Debug.Log("Anonymously Logged In | " + success.PlayFabId);
+            menuShifter.GoGame();
+            anonymous = false;
+        },
+        failure =>
+        {
+            Debug.LogError(failure.GenerateErrorReport());
+            anonymous = false;
+        }
+        );
+    }
+
+    private static bool registering = false;
     public void RegisterEvent()
     {
         if (registering) return;
@@ -242,7 +267,7 @@ public class AccountAPIManager : MonoBehaviour
             image.sprite = closedEye;
     }
 
-    private bool autologgingin = false;
+    private static bool autologgingin = false;
     public void DEBUG_AUTOLOGIN()
     {
         if (autologgingin) return;
