@@ -12,21 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d704f386bf87246c2ab3a34f17ab11be, type: 3}
   m_Name: Inventory
   m_EditorClassIdentifier: 
-  isGuest: 0
-  allPurchasableItemsList:
-  - {fileID: 46983395588436522, guid: 9e0b067cd5a51057f8e014c82e37d8f2, type: 3}
   defaultShip: {fileID: 3427211338575987713, guid: 46a6eca679bceed45be98971c86b8031, type: 3}
   shipsOwned:
   - {fileID: 3427211338575987713, guid: 46a6eca679bceed45be98971c86b8031, type: 3}
-  xr_credits: 0
+  - {fileID: 46983395588436522, guid: 9e0b067cd5a51057f8e014c82e37d8f2, type: 3}
+  xr_credits: 15619196
   selectedShipIndex: 0
+  displayName: dinner
   playStatistics:
-    stat_minutesPlayed: 2
-    stat_matchesPlayed: 5
+    stat_minutesPlayed: 5.865088113333335
+    stat_matchesPlayed: 13
+    stat_xp: 0
+    stat_level: 0
+    stat_prestige: 1
   achievements:
-    achievement_afk: 0
-    achievement_wave30: 0
-    achievement_allShips: 0
-    achievement_maxLevel: 0
-    achievement_prestiged: 0
-    achievement_breenseerayyang: 0
+    achievement_afk: 1
+    achievement_wave30: 1
+    achievement_allShips: 1
+    achievement_maxLevel: 1
+    achievement_prestiged: 1
+    achievement_breenseerayyang: 1
+  isGuest: 0
+  token: 

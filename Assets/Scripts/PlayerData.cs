@@ -7,8 +7,11 @@ using PlayFab.ClientModels;
 [Serializable]
 public struct PlayStatistics
 {
-    public float stat_minutesPlayed;
+    public double stat_minutesPlayed;
     public int stat_matchesPlayed;
+    public int stat_xp;
+    public int stat_level;
+    public int stat_prestige;
 }
 
 [Serializable]
@@ -26,12 +29,9 @@ public struct Achievements
 public class PlayerData : ScriptableObject
 {
     private static readonly string _defaultShipID = "ship_default";
-    private static readonly string _playStatisticsKey = "playtime";
+    private static readonly string _playStatisticsKey = "statistics";
     private static readonly string _achievementsKey = "achievements";
     private static readonly string _xrCreditsKey = "XD";
-
-    [Header("Guest Settings")]
-    [SerializeField] public bool isGuest;
     
     [Header("All Ships In The Game")]
     public Dictionary<string, Product> allShipsInGame = new Dictionary<string, Product>(); // All The Ships in Game tied by ItemID
@@ -45,10 +45,15 @@ public class PlayerData : ScriptableObject
     public List<Product> shipsOwned = new List<Product>(); // Raw List of ships owned
     public int xr_credits = 0;
     public uint selectedShipIndex = 0;
+    public Product selectedShip;
+    public string displayName;
+    public DateTime timeCreated;
 
     [Header("Player's General Statistics")]
     public PlayStatistics playStatistics = new PlayStatistics();
     public Achievements achievements = new Achievements();
+    public bool isGuest = false;
+    public string token;
 
     public static PlayerData RetrieveData()
     { return Resources.Load<PlayerData>("Inventory"); }
@@ -81,6 +86,16 @@ public class PlayerData : ScriptableObject
             );
         
         xr_credits = 0;
+        
+        PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest(),
+            success =>
+            {
+                if (success.AccountInfo.TitleInfo.DisplayName != null)
+                    displayName = success.AccountInfo.TitleInfo.DisplayName;
+                timeCreated = success.AccountInfo.Created;
+            },
+            FailCode
+            );
     }
 
     public void AddShip(string shipID)
@@ -113,6 +128,15 @@ public class PlayerData : ScriptableObject
                 }
 
                 xr_credits = success.VirtualCurrency["XD"];
+                
+                // Check All Ships for Achievement
+                achievements.achievement_allShips = true;
+                foreach (var ship in allShipsInGame)
+                {
+                    if (!shipsOwnedIndex.ContainsKey(ship.Key))
+                        achievements.achievement_allShips = false;
+                }
+                if (achievements.achievement_allShips) Debug.Log("ALL SHIPS ACHIEVEMENT");
                 action();
             },
             FailCode
@@ -121,6 +145,8 @@ public class PlayerData : ScriptableObject
 
     public void UploadStats()
     {
+        if (playStatistics.stat_level > 50)
+            playStatistics.stat_level = 50;
         string pStats = JsonUtility.ToJson(playStatistics);
         string ach = JsonUtility.ToJson(achievements);
         
@@ -139,14 +165,35 @@ public class PlayerData : ScriptableObject
             );
     }
 
-    public void FetchStats()
+    public void FetchStats(Action action)
     {
         PlayFabClientAPI.GetUserData(new GetUserDataRequest(),
             success =>
             {
                 Debug.Log("Fetched Player Data");
-                playStatistics = JsonUtility.FromJson<PlayStatistics>(success.Data[_playStatisticsKey].Value);
-                achievements = JsonUtility.FromJson<Achievements>(success.Data[_achievementsKey].Value);
+                if (success.Data.ContainsKey(_playStatisticsKey))
+                    playStatistics = JsonUtility.FromJson<PlayStatistics>(success.Data[_playStatisticsKey].Value);
+                else
+                {
+                    playStatistics.stat_matchesPlayed = 0;
+                    playStatistics.stat_minutesPlayed = 0;
+                    playStatistics.stat_level = 0;
+                    playStatistics.stat_xp = 0;
+                    playStatistics.stat_prestige = 0;
+                }
+                if (success.Data.ContainsKey(_achievementsKey))
+                    achievements = JsonUtility.FromJson<Achievements>(success.Data[_achievementsKey].Value);
+                else
+                {
+                    achievements.achievement_afk = false;
+                    achievements.achievement_wave30 = false;
+                    achievements.achievement_allShips = false;
+                    achievements.achievement_maxLevel = false;
+                    achievements.achievement_prestiged = false;
+                    achievements.achievement_breenseerayyang = false;
+                }
+
+                action();
             },
             FailCode
             );

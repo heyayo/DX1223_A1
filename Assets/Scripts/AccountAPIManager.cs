@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 
 public class AccountAPIManager : MonoBehaviour
 {
+    [SerializeField] private PlayFabSharedSettings settings;
     [SerializeField] private PlayerData playerData;
     [SerializeField] private MenuShifter menuShifter;
     
@@ -21,6 +23,12 @@ public class AccountAPIManager : MonoBehaviour
     [SerializeField] private TMP_InputField registerPasswordField;
     [SerializeField] private TMP_InputField registerEmailField;
     [SerializeField] private TMP_Text registerOutput;
+
+    [Header("Reset Password Elements")]
+    [SerializeField] private TMP_InputField resetEmailField;
+    [SerializeField] private TMP_Text resetStatusText;
+    [SerializeField] private TMP_Text resetButtonText;
+    [SerializeField] private Button resetButton;
     
     [Header("Password Visibility Assets")]
     [SerializeField] private Sprite closedEye;
@@ -81,6 +89,8 @@ public class AccountAPIManager : MonoBehaviour
                 Debug.Log("Login Success | " + success.PlayFabId);
                 if (successAction != null) successAction();
                 menuShifter.GoGame();
+                playerData.displayName = username;
+                playerData.isGuest = false;
             },
             failure =>
             {
@@ -107,6 +117,8 @@ public class AccountAPIManager : MonoBehaviour
             Debug.Log("Anonymously Logged In | " + success.PlayFabId);
             menuShifter.GoGame();
             anonymous = false;
+            playerData.displayName = "guest";
+            playerData.isGuest = true;
         },
         failure =>
         {
@@ -170,6 +182,40 @@ public class AccountAPIManager : MonoBehaviour
     {
         PlayFabClientAPI.ForgetAllCredentials();
     }
+
+    public void ResetPasswordEvent()
+    {
+        PlayFabClientAPI.SendAccountRecoveryEmail(new SendAccountRecoveryEmailRequest
+        {
+            Email = resetEmailField.text,
+            TitleId = settings.TitleId
+        },
+        success =>
+        {
+            Debug.Log("Email Sent to " + resetEmailField.text);
+            resetStatusText.text = "Password Reset Sent";
+        },
+        failure =>
+        {
+            Debug.LogError(failure.GenerateErrorReport());
+            Debug.LogError(failure.Error.ToString());
+            StartCoroutine(DenyReset());
+            resetStatusText.text = "Invalid Email";
+        }
+        );
+    }
+
+    private IEnumerator DenyReset()
+    {
+        resetButton.enabled = false;
+        resetButtonText.text = "DENIED";
+        yield return new WaitForSeconds(1);
+        resetButton.enabled = true;
+        resetButtonText.text = "Reset";
+    }
+
+    public void ResetText(TMP_Text text)
+    { text.text = ""; }
 
     public void PasswordFieldVisibilityToggle(TMP_InputField inputField)
     {
@@ -251,7 +297,7 @@ public class AccountAPIManager : MonoBehaviour
             success =>
             {
                 Debug.Log("DEBUG SIGNED IN | " + success.PlayFabId);
-                playerData.FetchStats();
+                playerData.FetchStats(()=>{});
             },
             failure => { Debug.Log("DEBUG SIGN IN FAILED | " + failure.ErrorMessage);}
             );

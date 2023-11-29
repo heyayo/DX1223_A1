@@ -21,15 +21,16 @@ public class GameScript : MonoBehaviour
     [SerializeField] private Button restartText;
     [SerializeField] private Button goBackText;
 
+    private DateTime startTime;
+
     private void Awake()
     { Instance = this; }
     
     private void Start()
     {
-        int shipIndex = Convert.ToInt32(data.selectedShipIndex);
         // Spawn Ship Selected
         var ship = Instantiate(
-            data.shipsOwned[shipIndex],
+            data.selectedShip,
             spawnPoint.position, spawnPoint.rotation);
         Transform shipt = ship.transform;
         shipt.rotation = Quaternion.Euler(-90,0,0);
@@ -38,6 +39,9 @@ public class GameScript : MonoBehaviour
 
         SetEndScreen(false);
         StartCoroutine(TextCountdown());
+
+        ++data.playStatistics.stat_matchesPlayed;
+        startTime = DateTime.Now;
     }
 
     public void EndGame()
@@ -49,9 +53,20 @@ public class GameScript : MonoBehaviour
         spawner.asteroidsInWave += 999999; // Bump this Number so Asteroids don't start the next wave
         statusText.text = "DEATH";
         SetEndScreen(true);
-        data.GiveCurrency(spawner.asteroidsDestroyed*10);
         
-        LeaderboardSubmitEvent(spawner.waves);
+        data.GiveCurrency(spawner.asteroidsDestroyed*10);
+        data.playStatistics.stat_xp += (spawner.waves * 50) + (spawner.asteroidsDestroyed * 10);
+        data.playStatistics.stat_level += data.playStatistics.stat_xp / 1000;
+        data.playStatistics.stat_xp %= 1000;
+        var delta = DateTime.Now - startTime;
+        data.playStatistics.stat_minutesPlayed += delta.TotalMinutes;
+        
+        if (!data.isGuest)
+            LeaderboardSubmitEvent(spawner.waves);
+
+        if (data.playStatistics.stat_level >= 50)
+            data.achievements.achievement_maxLevel = true;
+        data.UploadStats();
     }
 
     public void ReplayGame()

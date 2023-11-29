@@ -23,43 +23,48 @@ public class ShipLazySusan : MonoBehaviour
     [SerializeField] private Button playButton;
     [SerializeField] private Button purchaseButton;
     [SerializeField] private Button leaderboardButton;
+    [SerializeField] private Button statsButton;
 
     private void Awake()
     { Instance = this; }
     
-    // TODO Fix Purchase Button And Play Button Swapping Out
     public void Start()
     {
         playButton.gameObject.SetActive(false);
         purchaseButton.gameObject.SetActive(false);
         leaderboardButton.gameObject.SetActive(false);
+        statsButton.gameObject.SetActive(false);
         insufficientFundsWarning.gameObject.SetActive(false);
         shipTitle.text = "LOADING SHIPS...";
         data.Initialize(
             () =>
             {
-                data.FetchInventory(
-                    () =>
-                    {
-                        selection = new Product[data.allShipsInGame.Count]; // Size Selection Array to fit all ships owned
-                        // Instantiate Prefabs into Anchor Parent
-                        int index = 0;
-                        foreach (var ship in data.allShipsInGame)
+                data.FetchStats(() =>
+                {
+                    data.FetchInventory(
+                        () =>
                         {
-                            Product obj = Instantiate(ship.Value,anchor.position,anchor.rotation,anchor);
-                            obj.gameObject.SetActive(false);
-                            obj.GetComponent<ShipControl>().enabled = false;
-                            selection[index] = obj;
-                            ++index;
-                        }
-                        selection[0].gameObject.SetActive(true);
-                        shipTitle.text = selection[0].name;
-                        data.selectedShipIndex = 0;
-                        playButton.gameObject.SetActive(true);
-                        leaderboardButton.gameObject.SetActive(true);
-                        UpdateCredits();
-                    }
-                    );
+                            selection = new Product[data.allShipsInGame.Count]; // Size Selection Array to fit all ships owned
+                            // Instantiate Prefabs into Anchor Parent
+                            int index = 0;
+                            foreach (var ship in data.allShipsInGame)
+                            {
+                                Product obj = Instantiate(ship.Value,anchor.position,anchor.rotation,anchor);
+                                obj.gameObject.SetActive(false);
+                                obj.GetComponent<ShipControl>().enabled = false;
+                                selection[index] = obj;
+                                ++index;
+                            }
+                            selection[0].gameObject.SetActive(true);
+                            shipTitle.text = selection[0].name;
+                            data.selectedShipIndex = 0;
+                            data.selectedShip = data.shipsOwnedIndex[selection[data.selectedShipIndex].productID];
+                            playButton.gameObject.SetActive(true);
+                            leaderboardButton.gameObject.SetActive(true);
+                            statsButton.gameObject.SetActive(true);
+                            UpdateCredits();
+                        });
+                });
             }
             );
     }
@@ -73,6 +78,7 @@ public class ShipLazySusan : MonoBehaviour
         data.selectedShipIndex = (uint)((int)data.selectedShipIndex - dir) % (uint)selection.Length;
         selection[data.selectedShipIndex].gameObject.SetActive(true);
         shipTitle.text = selection[data.selectedShipIndex].productName;
+        data.selectedShip = data.allShipsInGame[selection[data.selectedShipIndex].productID];
 
         bool owned = data.shipsOwnedIndex.ContainsKey(selection[data.selectedShipIndex].productID); 
         purchaseButton.gameObject.SetActive(!owned);
