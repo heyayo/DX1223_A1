@@ -149,8 +149,7 @@ public class AccountAPIManager : MonoBehaviour
 
                 playerData.playStatistics.stat_minutesPlayed = 0;
                 playerData.playStatistics.stat_matchesPlayed = 0;
-                Login(registerUsernameField.text,registerPasswordField.text,
-                    () => { playerData.UploadStats(); });
+                Login(registerUsernameField.text,registerPasswordField.text);
             },
             failure =>
             {
