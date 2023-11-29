@@ -155,7 +155,7 @@ MonoBehaviour:
   projectile: {fileID: 8066728070128561959, guid: 25f43ab836e617b4bb78888259c34965, type: 3}
   firePoint: {fileID: 7840784646019786990}
   projectileVelocity: 5
-  fireRate: 0
+  fireRate: 2
   automaticWeapons: 1
 --- !u!114 &46983395588436522
 MonoBehaviour:
@@ -169,9 +169,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac59fefd52a6a604cba679f2745c236f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productName: WHITER
+  productName: Whiter
   productID: ship_white
-  productImage: {fileID: 21300000, guid: ceafcc76e3d15a8f183a9607f85b07ce, type: 3}
+  productPrice: 120
   productTag: 0
 --- !u!1 &4344766620850565751
 GameObject:

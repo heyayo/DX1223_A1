@@ -11,8 +11,8 @@ public class Product : MonoBehaviour
     
     public string productName;
     public string productID;
-    public Sprite productImage;
-    [FormerlySerializedAs("tag")] public PRODUCT_TAG productTag = PRODUCT_TAG.GENERIC;
+    public uint productPrice;
+    public PRODUCT_TAG productTag = PRODUCT_TAG.GENERIC;
 
     // Allows Editor to see Product ID as Prefab Name but exist in game as ProductName
     private void Awake()

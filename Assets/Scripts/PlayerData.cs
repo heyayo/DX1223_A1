@@ -34,7 +34,6 @@ public class PlayerData : ScriptableObject
     [SerializeField] public bool isGuest;
     
     [Header("All Ships In The Game")]
-    [SerializeField] private List<Product> allPurchasableItemsList = new List<Product>();
     public Dictionary<string, Product> allShipsInGame = new Dictionary<string, Product>(); // All The Ships in Game tied by ItemID
     public Dictionary<string, Product> allPurchasableItems = new Dictionary<string, Product>();
     
@@ -54,17 +53,32 @@ public class PlayerData : ScriptableObject
     public static PlayerData RetrieveData()
     { return Resources.Load<PlayerData>("Inventory"); }
     
-    public void Initialize()
+    public void Initialize(Action action)
     {
         allShipsInGame.Clear();
+        allPurchasableItems.Clear();
         allShipsInGame.Add(_defaultShipID,defaultShip);
 
-        foreach (var item in allPurchasableItemsList)
-        {
-            allPurchasableItems.Add(item.productID,item);
-            if (item.productTag == Product.PRODUCT_TAG.SHIP)
-                allShipsInGame.Add(item.productID,item);
-        }
+        PlayFabClientAPI.GetCatalogItems(new GetCatalogItemsRequest(),
+            success =>
+            {
+                foreach (var item in success.Catalog)
+                {
+                    Product product = Resources.Load<Product>("Products/" + item.ItemId);
+                    product.productName = item.DisplayName;
+                    product.productPrice = item.VirtualCurrencyPrices["XD"];
+                    allPurchasableItems.Add(item.ItemId,product);
+                    if (item.ItemClass == "ship")
+                    {
+                        allShipsInGame.Add(item.ItemId,product);
+                        product.productTag = Product.PRODUCT_TAG.SHIP;
+                    }
+                }
+                action();
+            },
+            failure =>
+            { Debug.LogError(failure.GenerateErrorReport()); }
+            );
         
         xr_credits = 0;
     }

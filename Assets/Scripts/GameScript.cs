@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using PlayFab;
+using PlayFab.ClientModels;
 
 public class GameScript : MonoBehaviour
 {
@@ -47,6 +50,8 @@ public class GameScript : MonoBehaviour
         statusText.text = "DEATH";
         SetEndScreen(true);
         data.GiveCurrency(spawner.asteroidsDestroyed*10);
+        
+        LeaderboardSubmitEvent(spawner.waves);
     }
 
     public void ReplayGame()
@@ -76,5 +81,30 @@ public class GameScript : MonoBehaviour
             yield return new WaitForSeconds(1);
         }
         statusText.gameObject.SetActive(false);
+    }
+    
+    public void LeaderboardSubmitEvent(int score)
+    {
+        var req = new UpdatePlayerStatisticsRequest
+        {
+            Statistics = new List<StatisticUpdate>
+            {
+                new StatisticUpdate
+                {
+                    StatisticName = "Scores",
+                    Value = score
+                }
+            }
+        };
+        PlayFabClientAPI.UpdatePlayerStatistics(req,
+            success =>
+            {
+                Debug.Log("Updated Scores Leaderboard");
+            },
+            failure =>
+            {
+                Debug.Log("Failed To Update Player Statistics | " + failure.ErrorMessage);
+            }
+            );
     }
 }

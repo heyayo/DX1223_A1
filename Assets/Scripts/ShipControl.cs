@@ -80,7 +80,7 @@ public class ShipControl : MonoBehaviour
     private void Shoot()
     {
         _lastFire += Time.deltaTime;
-        // TODO Fire Rate
+        // TODO TEST Fire Rate
         if (_chosenType(KeyCode.Space) && _lastFire > _netFireRate)
         {
             _lastFire = 0f;

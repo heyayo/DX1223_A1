@@ -21,16 +21,6 @@ public class AccountAPIManager : MonoBehaviour
     [SerializeField] private TMP_InputField registerPasswordField;
     [SerializeField] private TMP_InputField registerEmailField;
     [SerializeField] private TMP_Text registerOutput;
-
-    [Header("Leaderboard Panel Elements")]
-    [SerializeField] private TMP_Text names;
-    [SerializeField] private TMP_Text scores;
-    [SerializeField] private TMP_Text positions;
-    [SerializeField] private TMP_Text leaderboardOutput;
-
-    [Header("Leaderboard Configuration")]
-    [SerializeField] private int startingPosition = 0;
-    [SerializeField] private int rowCount = 10;
     
     [Header("Password Visibility Assets")]
     [SerializeField] private Sprite closedEye;
@@ -176,67 +166,6 @@ public class AccountAPIManager : MonoBehaviour
             });
     }
 
-    public void LeaderboardEvent()
-    {
-        var req = new GetLeaderboardRequest
-            {
-                StatisticName = "Scores",
-                StartPosition = 0,
-                MaxResultsCount = rowCount
-            };
-        PlayFabClientAPI.GetLeaderboard(req,
-            success =>
-            {
-                Debug.Log("Succesfully Fetched Leaderboard Data");
-                names.text = "";
-                scores.text = "";
-                positions.text = "";
-                for (int i = 0; i < success.Leaderboard.Count; ++i)
-                {
-                    names.text += success.Leaderboard[i].DisplayName + '\n';
-                    scores.text += success.Leaderboard[i].StatValue.ToString() + '\n';
-                    positions.text += (success.Leaderboard[i].Position + 1).ToString() + '\n';
-                    Debug.Log("Leaderboard Entry | " +
-                              success.Leaderboard[i].DisplayName + " | " +
-                              success.Leaderboard[i].StatValue + " | " +
-                              success.Leaderboard[i].Position);
-                }
-
-                leaderboardOutput.text = "Leaderboard Data Fetched";
-            },
-            failure =>
-            {
-                Debug.Log("Failed To Fetch Leaderboard Data | " + failure.ErrorMessage);
-                leaderboardOutput.text = "Unable To Fetch Leaderboards | " + failure.ErrorMessage;
-            }
-        );
-    }
-
-    public void LeaderboardSubmitEvent(int score)
-    {
-        var req = new UpdatePlayerStatisticsRequest
-        {
-            Statistics = new List<StatisticUpdate>
-            {
-                new StatisticUpdate
-                {
-                    StatisticName = "Scores",
-                    Value = score
-                }
-            }
-        };
-        PlayFabClientAPI.UpdatePlayerStatistics(req,
-            success =>
-            {
-                Debug.Log("Updated Scores Leaderboard");
-            },
-            failure =>
-            {
-                Debug.Log("Failed To Update Player Statistics | " + failure.ErrorMessage);
-            }
-        );
-    }
-
     public void LogoutEvent()
     {
         PlayFabClientAPI.ForgetAllCredentials();
@@ -290,11 +219,6 @@ public class AccountAPIManager : MonoBehaviour
                 Debug.Log("DEBUG SIGN IN FAILED | " + failure.ErrorMessage);
             }
                 );
-    }
-
-    public void DEBUG_CHEATSCORE()
-    {
-        LeaderboardSubmitEvent(Convert.ToInt32(cheatScore.text));
     }
 
     public void DEBUG_SETUPPLAYERSTATS()

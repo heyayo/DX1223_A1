@@ -20,7 +20,6 @@ public class ProductPanel : MonoBehaviour
     public void Create()
     {
         productTitle.text = product.productName;
-        productPreview.sprite = product.productImage;
         purchaseButton.onClick.AddListener(BuyProduct);
         if (data.shipsOwnedIndex.ContainsKey(product.productID))
         {
@@ -29,8 +28,6 @@ public class ProductPanel : MonoBehaviour
         }
         else
             purchaseText.text = "PURCHASE";
-
-        statusText = MenuPrepper.Instance.statusText;
     }
 
     public void BuyProduct()
