@@ -27,6 +27,7 @@ public class FriendsListPanel : MonoBehaviour
 
     private void PopulateFriendsList()
     {
+        EmptyTexts();
         foreach (var x in _registry)
         { InsertNameIntoList(x.Value.Username); }
     }
@@ -67,12 +68,17 @@ public class FriendsListPanel : MonoBehaviour
         PlayFabClientAPI.AddFriend(req, result =>
         {
             Debug.Log("Sent Added Friend");
-            InsertNameIntoList(username);
+            RequestFriendsList();
         },error => Debug.LogError("Failed To Add Friend"));
     }
 
     private void RemoveFriend(string username)
     {
+        if (!_registry.ContainsKey(username))
+        {
+            Debug.LogError("This person is not your friend");
+            return;
+        }
         var req = new RemoveFriendRequest
         { FriendPlayFabId = _registry[username].FriendPlayFabId };
 
