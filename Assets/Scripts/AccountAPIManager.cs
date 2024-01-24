@@ -6,6 +6,7 @@ using TMPro;
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine.UI;
+using EntityKey = PlayFab.GroupsModels.EntityKey;
 
 public class AccountAPIManager : MonoBehaviour
 {
@@ -52,6 +53,9 @@ public class AccountAPIManager : MonoBehaviour
                 loginEmailField.text = "";
                 loginPasswordField.text = "";
                 loginOutput.text = "";
+                playerData.entityKey = new EntityKey();
+                playerData.entityKey.Id = success.EntityToken.Entity.Id;
+                playerData.entityKey.Type = success.EntityToken.Entity.Type;
             },
             failure =>
             {

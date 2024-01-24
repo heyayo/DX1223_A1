@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using PlayFab;
+using PlayFab.AuthenticationModels;
 using PlayFab.ClientModels;
+using EntityKey = PlayFab.GroupsModels.EntityKey;
 
 [Serializable]
 public struct PlayStatistics
@@ -54,6 +56,9 @@ public class PlayerData : ScriptableObject
     public Achievements achievements = new Achievements();
     public bool isGuest = false;
     public string token;
+    public string entityID;
+    public EntityKey currentGroup;
+    public EntityKey entityKey;
 
     public static PlayerData RetrieveData()
     { return Resources.Load<PlayerData>("Inventory"); }
@@ -93,6 +98,7 @@ public class PlayerData : ScriptableObject
                 if (success.AccountInfo.TitleInfo.DisplayName != null)
                     displayName = success.AccountInfo.TitleInfo.DisplayName;
                 timeCreated = success.AccountInfo.Created;
+                entityID = success.AccountInfo.PlayFabId;
             },
             FailCode
             );
