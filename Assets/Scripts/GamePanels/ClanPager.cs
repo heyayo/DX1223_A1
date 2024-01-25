@@ -1,18 +1,22 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using PlayFab;
 using PlayFab.GroupsModels;
 using UnityEngine;
 using TMPro;
-using UnityEngine.Serialization;
 
 public class ClanPager : MonoBehaviour
 {
     private PlayerData _data;
 
+    [Header("Texts")]
     [SerializeField] private TMP_Text clanName;
     [SerializeField] private TMP_Text clanMembers;
+    [SerializeField] private TMP_Text outputText;
+
+    [Header("Inputs")]
+    [SerializeField] private TMP_InputField joinField;
+    [SerializeField] private TMP_InputField createField;
 
     private void Awake()
     {
@@ -22,6 +26,12 @@ public class ClanPager : MonoBehaviour
 
     public void ButtonCallback()
     { FetchClanData(); }
+    public void JoinClanCall()
+    { JoinClan(joinField.text); }
+    public void CreateClanCall()
+    { CreateClan(createField.text); }
+    public void LeaveClanCall()
+    { LeaveClan(); }
 
     private void FetchClanData()
     {
@@ -39,7 +49,7 @@ public class ClanPager : MonoBehaviour
             clanName.text = response.Groups[0].GroupName;
             _data.currentGroup = response.Groups[0].Group;
             FetchClanMembers();
-        }, error);
+        }, common_error);
     }
 
     private void FetchClanMembers()
@@ -58,20 +68,21 @@ public class ClanPager : MonoBehaviour
                 }
             }
             clanMembers.text += "Members: " + response.Members.Count;
-        }, error);
+        }, common_error);
     }
 
-    private void CreateClan(string name)
+    private void CreateClan(string clan)
     {
-        var req = new CreateGroupRequest { GroupName = name };
+        var req = new CreateGroupRequest { GroupName = clan };
 
         PlayFabGroupsAPI.CreateGroup(req, response =>
         {
             _data.currentGroup = response.Group;
-            clanName.text = name;
+            clanName.text = clan;
             clanMembers.text = "";
             clanMembers.text = _data.entityID;
-        }, error);
+            outputText.text = "Created Clan, " + clan;
+        }, common_error);
     }
 
     private void LeaveClan()
@@ -82,28 +93,39 @@ public class ClanPager : MonoBehaviour
         PlayFabGroupsAPI.RemoveMembers(req, response =>
         {
             FetchClanData();
+            outputText.text = "Left Clan";
             Debug.Log("Left Clan");
-        },error);
+        },common_error);
     }
 
     private void JoinClan(string clan)
     {
         if (_data.currentGroup != null)
         {
+            outputText.text = "Already in a Clan";
             Debug.Log("Already in a Clan");
             return;
         }
 
         var req = new ApplyToGroupRequest { };
+
+        PlayFabGroupsAPI.ApplyToGroup(req, response =>
+        {
+            outputText.text = "Applied To Clan, " + clan;
+            Debug.Log("Applied to Group");
+        }, common_error);
     }
 
-    private void GetGroupID(string name, Action<GetGroupResponse> callback)
+    private void GetGroupID(string group_name, Action<GetGroupResponse> callback)
     {
-        var req = new GetGroupRequest { GroupName = name };
+        var req = new GetGroupRequest { GroupName = group_name };
 
-        PlayFabGroupsAPI.GetGroup(req, callback,error);
+        PlayFabGroupsAPI.GetGroup(req, callback,common_error);
     }
 
-    private void error(PlayFabError error)
-    { Debug.LogError(error.GenerateErrorReport()); }
+    private void common_error(PlayFabError error)
+    {
+        outputText.text = "Error";
+        Debug.LogError(error.GenerateErrorReport());
+    }
 }
