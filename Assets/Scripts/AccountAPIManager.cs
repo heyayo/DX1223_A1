@@ -95,6 +95,9 @@ public class AccountAPIManager : MonoBehaviour
                 menuShifter.GoGame();
                 playerData.displayName = username;
                 playerData.isGuest = false;
+                playerData.entityKey = new EntityKey();
+                playerData.entityKey.Id = success.EntityToken.Entity.Id;
+                playerData.entityKey.Type = success.EntityToken.Entity.Type;
             },
             failure =>
             {
@@ -123,6 +126,9 @@ public class AccountAPIManager : MonoBehaviour
             anonymous = false;
             playerData.displayName = "guest";
             playerData.isGuest = true;
+            playerData.entityKey = new EntityKey();
+            playerData.entityKey.Id = success.EntityToken.Entity.Id;
+            playerData.entityKey.Type = success.EntityToken.Entity.Type;
         },
         failure =>
         {

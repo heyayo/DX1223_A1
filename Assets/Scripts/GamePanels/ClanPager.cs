@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using PlayFab;
+using PlayFab.ClientModels;
 using PlayFab.GroupsModels;
 using UnityEngine;
 using TMPro;
+using EntityKey = PlayFab.GroupsModels.EntityKey;
 
 public class ClanPager : MonoBehaviour
 {
     private PlayerData _data;
+    private List<GroupApplication> _applicants;
 
     [Header("Texts")]
     [SerializeField] private TMP_Text clanName;
@@ -17,21 +20,30 @@ public class ClanPager : MonoBehaviour
     [Header("Inputs")]
     [SerializeField] private TMP_InputField joinField;
     [SerializeField] private TMP_InputField createField;
+    [SerializeField] private TMP_Dropdown applicantsList;
 
     private void Awake()
     {
         _data = PlayerData.RetrieveData();
+        _applicants = new List<GroupApplication>();
+        outputText.text = "";
+        _data.currentGroup = null;
         gameObject.SetActive(false);
     }
 
     public void ButtonCallback()
-    { FetchClanData(); }
+    {
+        FetchClanData(); // Fetch data about the group
+        FetchApplicants(); // See who wants to join the group
+    }
     public void JoinClanCall()
     { JoinClan(joinField.text); }
     public void CreateClanCall()
     { CreateClan(createField.text); }
     public void LeaveClanCall()
     { LeaveClan(); }
+    public void AcceptApplicationCall()
+    { AcceptClanApplication(_applicants[applicantsList.value].Entity.Key); }
 
     private void FetchClanData()
     {
@@ -48,6 +60,7 @@ public class ClanPager : MonoBehaviour
 
             clanName.text = response.Groups[0].GroupName;
             _data.currentGroup = response.Groups[0].Group;
+            Debug.Log("In Clan: " + _data.currentGroup.Id);
             FetchClanMembers();
         }, common_error);
     }
@@ -61,7 +74,7 @@ public class ClanPager : MonoBehaviour
             clanMembers.text = "";
             for (int i = 0; i < response.Members.Count; ++i)
             {
-                clanMembers.text += response.Members[i].RoleName;
+                clanMembers.text += response.Members[i].RoleName + " | ";
                 for (int j = 0; j < response.Members[i].Members.Count; ++j)
                 {
                     clanMembers.text += response.Members[i].Members[j].Key.Id + '\n';
@@ -80,7 +93,7 @@ public class ClanPager : MonoBehaviour
             _data.currentGroup = response.Group;
             clanName.text = clan;
             clanMembers.text = "";
-            clanMembers.text = _data.entityID;
+            FetchClanData();
             outputText.text = "Created Clan, " + clan;
         }, common_error);
     }
@@ -92,6 +105,7 @@ public class ClanPager : MonoBehaviour
 
         PlayFabGroupsAPI.RemoveMembers(req, response =>
         {
+            _data.currentGroup = null;
             FetchClanData();
             outputText.text = "Left Clan";
             Debug.Log("Left Clan");
@@ -114,6 +128,40 @@ public class ClanPager : MonoBehaviour
             outputText.text = "Applied To Clan, " + clan;
             Debug.Log("Applied to Group");
         }, common_error);
+    }
+
+    private void AcceptClanApplication(EntityKey applicant)
+    {
+        var req = new AcceptGroupApplicationRequest { Group = _data.currentGroup, Entity =  applicant };
+
+        PlayFabGroupsAPI.AcceptGroupApplication(req, response =>
+        {
+            Debug.Log("Accepted Group Application");
+            outputText.text = "Accepted Group Application";
+        },common_error);
+    }
+
+    private void FetchApplicants()
+    {
+        applicantsList.options.Clear(); // Empty out options
+        if (_data.currentGroup == null)
+        {
+            Debug.Log("Unable to fetch Applicants | Not in a clan");
+            return;
+        }
+        Debug.Log("Fetching Applicants");
+        var req = new ListGroupApplicationsRequest { Group = _data.currentGroup };
+
+        PlayFabGroupsAPI.ListGroupApplications(req, response =>
+        {
+            _applicants = new List<GroupApplication>(response.Applications);
+            Debug.Log("Fetched Group Applicants");
+            foreach (var applicant in _applicants)
+            {
+                // Populate Dropdown Menu
+                applicantsList.options.Add(new TMP_Dropdown.OptionData{text = applicant.Entity.Key.Id});
+            }
+        },common_error);
     }
 
     private void GetGroupID(string group_name, Action<GetGroupResponse> callback)
