@@ -13,6 +13,9 @@ public class FriendsListPanel : MonoBehaviour
 
     private Dictionary<string, FriendInfo> _registry;
 
+    public Dictionary<string,FriendInfo> Friends
+    { get => _registry; }
+
     private void Start()
     {
         _registry = new Dictionary<string, FriendInfo>();
