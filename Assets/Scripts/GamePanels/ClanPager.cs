@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using PlayFab;
-using PlayFab.ClientModels;
 using PlayFab.GroupsModels;
 using UnityEngine;
 using TMPro;
@@ -74,9 +73,9 @@ public class ClanPager : MonoBehaviour
             clanMembers.text = "";
             for (int i = 0; i < response.Members.Count; ++i)
             {
-                clanMembers.text += response.Members[i].RoleName + " | ";
                 for (int j = 0; j < response.Members[i].Members.Count; ++j)
                 {
+                    clanMembers.text += response.Members[i].RoleName + " | ";
                     clanMembers.text += response.Members[i].Members[j].Key.Id + '\n';
                 }
             }
@@ -121,13 +120,16 @@ public class ClanPager : MonoBehaviour
             return;
         }
 
-        var req = new ApplyToGroupRequest { };
-
-        PlayFabGroupsAPI.ApplyToGroup(req, response =>
+        GetGroupID(clan, response =>
         {
-            outputText.text = "Applied To Clan, " + clan;
-            Debug.Log("Applied to Group");
-        }, common_error);
+            var req = new ApplyToGroupRequest { Group = response.Group };
+
+            PlayFabGroupsAPI.ApplyToGroup(req, response =>
+            {
+                outputText.text = "Applied To Clan, " + clan;
+                Debug.Log("Applied to Group");
+            }, common_error);
+        });
     }
 
     private void AcceptClanApplication(EntityKey applicant)
@@ -138,6 +140,7 @@ public class ClanPager : MonoBehaviour
         {
             Debug.Log("Accepted Group Application");
             outputText.text = "Accepted Group Application";
+            FetchClanMembers();
         },common_error);
     }
 
